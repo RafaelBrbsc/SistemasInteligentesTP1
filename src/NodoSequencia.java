@@ -46,4 +46,8 @@ public class NodoSequencia {
     public String getEstado() {
         return caminhos.get(caminhos.size()-1).estado;
     }
+
+    public String getCaminho() {
+        return caminhos.get(caminhos.size()-1).caminho;
+    }
 }

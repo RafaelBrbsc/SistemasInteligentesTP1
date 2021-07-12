@@ -28,19 +28,21 @@ public class HeuristicaComplexa {
 
     public static void buscaHeuristica() {
         List<NodoSequencia> visitados = new ArrayList<>();
-        Nodo nInicial = new Nodo(estadoInicial, calculaHeuristicaComplexa(estadoInicial));
+        Nodo nInicial = new Nodo(estadoInicial, calculaHeuristicaComplexa(estadoInicial), "inicio");
         NodoSequencia nsAtual = new NodoSequencia(nInicial);
         List<NodoSequencia> fronteira = new ArrayList<>();
 
         String estadoAtual = estadoInicial;
+        String caminhoAtual = nInicial.caminho;
         while(!estadoAtual.equals(goal)) {
-            for(Nodo alcancavel : calculaAlcance(estadoAtual)) {
+            for(Nodo alcancavel : calculaAlcance(estadoAtual, caminhoAtual)) {
                 fronteira.add(nsAtual.proximo(alcancavel));
             }
             fronteira = fronteira.stream().sorted(Comparator.comparingDouble(NodoSequencia::getCustoComHeuristica).thenComparingDouble(NodoSequencia::getHeuristica)).collect(Collectors.toList());
             NodoSequencia pop = fronteira.remove(0);
             visitados.add(pop);
             estadoAtual = pop.getEstado();
+            caminhoAtual = pop.getCaminho();
             nsAtual = pop;
             System.out.println("Estado " + estadoAtual + ", custo " + pop.custoAcumulado + ", heuristica " + pop.heuristica + ", custo total " + pop.getCustoComHeuristica());
         }
@@ -55,36 +57,36 @@ public class HeuristicaComplexa {
         System.out.println("---");
     }
 
-    public static List<Nodo> calculaAlcance(String estado) {
+    public static List<Nodo> calculaAlcance(String estado, String caminho) {
         List<Nodo> alcance = new ArrayList<>();
         int posVazio = estado.indexOf('0');
-        if (posVazio%3 != 2) { //diferente de ultima coluna
+        if (posVazio%3 != 2 && caminho != "esquerda") { //diferente de ultima coluna
             char toMove = estado.charAt(posVazio+1);
             String direita = estado.replace('0', '@')
                     .replace(toMove, '0')
                     .replace('@', toMove);
-            alcance.add(new Nodo(direita, calculaHeuristicaComplexa(direita)));
+            alcance.add(new Nodo(direita, calculaHeuristicaComplexa(direita), "direita"));
         }
-        if (posVazio%3 != 0) { //diferente de primeira coluna
+        if (posVazio%3 != 0 && caminho != "direita") { //diferente de primeira coluna
             char toMove = estado.charAt(posVazio-1);
             String esquerda = estado.replace('0', '@')
                     .replace(toMove, '0')
                     .replace('@', toMove);
-            alcance.add(new Nodo(esquerda, calculaHeuristicaComplexa(esquerda)));
+            alcance.add(new Nodo(esquerda, calculaHeuristicaComplexa(esquerda), "esquerda"));
         }
-        if (posVazio/3 != 2) { //diferente de ultima linha
+        if (posVazio/3 != 2 && caminho != "sobe") { //diferente de ultima linha
             char toMove = estado.charAt(posVazio+3);
             String desce = estado.replace('0', '@')
                     .replace(toMove, '0')
                     .replace('@', toMove);
-            alcance.add(new Nodo(desce, calculaHeuristicaComplexa(desce)));
+            alcance.add(new Nodo(desce, calculaHeuristicaComplexa(desce), "desce"));
         }
-        if (posVazio/3 != 0) { //diferente de primeira linha
+        if (posVazio/3 != 0 && caminho != "desce") { //diferente de primeira linha
             char toMove = estado.charAt(posVazio-3);
             String sobe = estado.replace('0', '@')
                     .replace(toMove, '0')
                     .replace('@', toMove);
-            alcance.add(new Nodo(sobe, calculaHeuristicaComplexa(sobe)));
+            alcance.add(new Nodo(sobe, calculaHeuristicaComplexa(sobe), "sobe"));
         }
 
         return alcance;

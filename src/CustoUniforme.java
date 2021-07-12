@@ -29,23 +29,30 @@ public class CustoUniforme {
 
     public static void buscaCustoUniforme() {
         List<NodoSequencia> visitados = new ArrayList<>();
-        Nodo nInicial = new Nodo(estadoInicial, 0);
+        Nodo nInicial = new Nodo(estadoInicial, 0, "inicio");
         NodoSequencia nsAtual = new NodoSequencia(nInicial);
         List<NodoSequencia> fronteira = new ArrayList<>();
+        int contador = 1;
 
         String estadoAtual = estadoInicial;
+        String caminhoAtual = nInicial.caminho;
         while(!estadoAtual.equals(goal)) {
-            for(Nodo alcancavel : calculaAlcance(estadoAtual)) {
+            for(Nodo alcancavel : calculaAlcance(estadoAtual, caminhoAtual)) {
                 fronteira.add(nsAtual.proximo(alcancavel));
             }
-            fronteira = fronteira.stream().sorted(Comparator.comparingInt(NodoSequencia::getCustoAcumulado)).collect(Collectors.toList());
+            fronteira = fronteira.stream().sorted(Comparator.comparingInt(NodoSequencia::getCustoAcumulado))
+                    .collect(Collectors.toList());
             NodoSequencia pop = fronteira.remove(0);
             visitados.add(pop);
             estadoAtual = pop.getEstado();
+            caminhoAtual = pop.getCaminho();
             nsAtual = pop;
             System.out.println("Estado " + estadoAtual + ", custo " + pop.custoAcumulado);
+            contador++;
         }
 
+        System.out.println("Número de nodos visitados: " + contador);
+        System.out.println("Total de nodos expandidos/criados: " + (contador + fronteira.size()));
         System.out.println("Melhor caminho obtido, " + (nsAtual.caminhos.size()-1) + " movimentos:");
         for (Nodo caminho : nsAtual.caminhos) {
             System.out.println("---");
@@ -56,36 +63,36 @@ public class CustoUniforme {
         System.out.println("---");
     }
 
-    public static List<Nodo> calculaAlcance(String estado) {
+    public static List<Nodo> calculaAlcance(String estado, String caminho) {
         List<Nodo> alcance = new ArrayList<>();
         int posVazio = estado.indexOf('0');
-        if (posVazio%3 != 2) { //diferente de ultima coluna
+        if (posVazio%3 != 2 && caminho != "esquerda") { //diferente de ultima coluna
             char toMove = estado.charAt(posVazio+1);
             String direita = estado.replace('0', '@')
                     .replace(toMove, '0')
                     .replace('@', toMove);
-            alcance.add(new Nodo(direita, 0));
+            alcance.add(new Nodo(direita, 0, "direita"));
         }
-        if (posVazio%3 != 0) { //diferente de primeira coluna
+        if (posVazio%3 != 0 && caminho != "direita") { //diferente de primeira coluna
             char toMove = estado.charAt(posVazio-1);
             String esquerda = estado.replace('0', '@')
                     .replace(toMove, '0')
                     .replace('@', toMove);
-            alcance.add(new Nodo(esquerda, 0));
+            alcance.add(new Nodo(esquerda, 0, "esquerda"));
         }
-        if (posVazio/3 != 2) { //diferente de ultima linha
+        if (posVazio/3 != 2 && caminho != "sobe") { //diferente de ultima linha
             char toMove = estado.charAt(posVazio+3);
             String desce = estado.replace('0', '@')
                     .replace(toMove, '0')
                     .replace('@', toMove);
-            alcance.add(new Nodo(desce, 0));
+            alcance.add(new Nodo(desce, 0, "desce"));
         }
-        if (posVazio/3 != 0) { //diferente de primeira linha
+        if (posVazio/3 != 0 && caminho != "desce") { //diferente de primeira linha
             char toMove = estado.charAt(posVazio-3);
             String sobe = estado.replace('0', '@')
                     .replace(toMove, '0')
                     .replace('@', toMove);
-            alcance.add(new Nodo(sobe, 0));
+            alcance.add(new Nodo(sobe, 0, "sobe"));
         }
 
         return alcance;
