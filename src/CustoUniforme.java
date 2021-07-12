@@ -8,6 +8,8 @@ public class CustoUniforme {
 
     protected static final String goal = "123456780";
     protected static String estadoInicial;
+    protected static List<String> visitados;
+    protected static List<NodoSequencia> fronteira;
 
     public static void main(String[] args) {
         System.out.println("Digite o estado inicial, inserindo 0 no lugar do espaço vazio. (Exemplo: estado final é 123456780)");
@@ -28,19 +30,21 @@ public class CustoUniforme {
     }
 
     public static void buscaCustoUniforme() {
-        List<NodoSequencia> visitados = new ArrayList<>();
+        visitados = new ArrayList<>();
+        fronteira = new ArrayList<>();
         Nodo nInicial = new Nodo(estadoInicial, 0);
         NodoSequencia nsAtual = new NodoSequencia(nInicial);
-        List<NodoSequencia> fronteira = new ArrayList<>();
 
         String estadoAtual = estadoInicial;
         while(!estadoAtual.equals(goal)) {
             for(Nodo alcancavel : calculaAlcance(estadoAtual)) {
-                fronteira.add(nsAtual.proximo(alcancavel));
+                if (!visitados.contains(alcancavel.estado)) {
+                    fronteira.add(nsAtual.proximo(alcancavel));
+                }
             }
             fronteira = fronteira.stream().sorted(Comparator.comparingInt(NodoSequencia::getCustoAcumulado)).collect(Collectors.toList());
             NodoSequencia pop = fronteira.remove(0);
-            visitados.add(pop);
+            visitados.add(pop.getEstado());
             estadoAtual = pop.getEstado();
             nsAtual = pop;
             System.out.println("Estado " + estadoAtual + ", custo " + pop.custoAcumulado);
