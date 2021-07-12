@@ -10,6 +10,8 @@ public class CustoUniforme {
     protected static String estadoInicial;
     protected static List<String> visitados;
     protected static List<NodoSequencia> fronteira;
+    protected static int expandidosCount = 0;
+    protected static int maiorFronteira = 0;
 
     public static void main(String[] args) {
         System.out.println("Digite o estado inicial, inserindo 0 no lugar do espaço vazio. (Exemplo: estado final é 123456780)");
@@ -40,14 +42,18 @@ public class CustoUniforme {
             for(Nodo alcancavel : calculaAlcance(estadoAtual)) {
                 if (!visitados.contains(alcancavel.estado)) {
                     fronteira.add(nsAtual.proximo(alcancavel));
+                    expandidosCount++;
                 }
+            }
+            if (maiorFronteira < fronteira.size()) {
+                maiorFronteira = fronteira.size();
             }
             fronteira = fronteira.stream().sorted(Comparator.comparingInt(NodoSequencia::getCustoAcumulado)).collect(Collectors.toList());
             NodoSequencia pop = fronteira.remove(0);
             visitados.add(pop.getEstado());
             estadoAtual = pop.getEstado();
             nsAtual = pop;
-            System.out.println("Estado " + estadoAtual + ", custo " + pop.custoAcumulado);
+//            System.out.println("Estado " + estadoAtual + ", custo " + pop.custoAcumulado);
         }
 
         System.out.println("Melhor caminho obtido, " + (nsAtual.caminhos.size()-1) + " movimentos:");
@@ -58,6 +64,10 @@ public class CustoUniforme {
             System.out.println(caminho.estado.substring(6,9));
         }
         System.out.println("---");
+        System.out.println("Total de nodos visitados: " + visitados.size());
+        System.out.println("Total de nodos expandidos: " + expandidosCount);
+        System.out.println("Maior fronteira: " + maiorFronteira);
+        System.out.println("Tamanho do caminho: " + (nsAtual.caminhos.size()-1));
     }
 
     public static List<Nodo> calculaAlcance(String estado) {
