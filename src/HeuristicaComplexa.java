@@ -52,7 +52,6 @@ public class HeuristicaComplexa {
             visitados.add(pop.getEstado());
             estadoAtual = pop.getEstado();
             nsAtual = pop;
-            System.out.println("Estado " + estadoAtual + ", custo " + pop.custoAcumulado + ", heuristica " + pop.heuristica + ", custo total " + pop.getCustoComHeuristica());
         }
 
         System.out.println("Melhor caminho obtido, " + (nsAtual.caminhos.size()-1) + " movimentos:");
@@ -113,7 +112,7 @@ public class HeuristicaComplexa {
             int vOffset = Math.abs((underTest-1)/3 - i/3);
             sum += hOffset + vOffset;
         }
-        return sum/2;
+        return sum;
     }
 
     public static boolean estadoValido(String estado) {

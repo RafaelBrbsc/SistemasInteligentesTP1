@@ -52,7 +52,6 @@ public class HeuristicaSimples {
             visitados.add(pop.getEstado());
             estadoAtual = pop.getEstado();
             nsAtual = pop;
-            System.out.println("Estado " + estadoAtual + ", custo " + pop.custoAcumulado + ", heuristica " + pop.heuristica + ", custo total " + pop.getCustoComHeuristica());
         }
 
         System.out.println("Melhor caminho obtido, " + (nsAtual.caminhos.size()-1) + " movimentos:");
@@ -110,7 +109,7 @@ public class HeuristicaSimples {
             if (estado.charAt(i) != (char)((i+1)%9+'0'))
                 sum++;
         }
-        return sum/2;
+        return sum;
     }
 
     public static boolean estadoValido(String estado) {

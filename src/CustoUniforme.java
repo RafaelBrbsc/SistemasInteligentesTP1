@@ -53,7 +53,6 @@ public class CustoUniforme {
             visitados.add(pop.getEstado());
             estadoAtual = pop.getEstado();
             nsAtual = pop;
-//            System.out.println("Estado " + estadoAtual + ", custo " + pop.custoAcumulado);
         }
 
         System.out.println("Melhor caminho obtido, " + (nsAtual.caminhos.size()-1) + " movimentos:");
